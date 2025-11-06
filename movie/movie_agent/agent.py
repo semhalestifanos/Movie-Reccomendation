@@ -1,9 +1,25 @@
+import sys
+import pysqlite3
+
+sys.modules["sqlite3"] = pysqlite3
+
 import os
 import pandas as pd
 from sentence_transformers import SentenceTransformer
 import chromadb
 from google.adk.agents import Agent
 GEMINI_MODEL = "gemini-2.5-flash"
+
+
+import google.generativeai as genai
+
+# Get the API key from environment variable
+api_key = os.getenv("GEMINI_API_KEY")
+if not api_key:
+    raise ValueError("GEMINI_API_KEY environment variable not set")
+
+# Configure the genai client with your API key
+genai.configure(api_key=api_key)
 
 # Build a robust path to the data file relative to the script's location
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -98,3 +114,21 @@ not a boring catalog.
 """,
     tools=[load_data, recommend_movies, explain_choice],
 )
+
+
+import requests
+
+def check_internet():
+    try:
+        response = requests.get("https://huggingface.co", timeout=5)
+        if response.status_code == 200:
+            return True
+        else:
+            return False
+    except requests.ConnectionError:
+        return False
+
+if check_internet():
+    print("Internet connection is available.")
+else:
+    print("No internet connection.")
