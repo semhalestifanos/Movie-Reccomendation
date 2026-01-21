@@ -1,0 +1,7 @@
+
+movie/.env
+__pycache__/
+*.pyc
+*.pkl
+.vscode/
+*=0.5.5
